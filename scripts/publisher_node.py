@@ -20,14 +20,14 @@ def pose_callback(data):
 	# convert angular position to degrees
 	#
 	# convert x and y to cm
-	pos_msg.x = data.x * 100
+	pos_msg.x = data.x
 	pos_msg.y = data.y * 100
 	
 	
 def callback(data):
 	global test
 	test.xd = data.xd
-	test.kp = data.kp
+	test.kp = data.kp 
 	
 	
 	
@@ -36,10 +36,10 @@ if __name__ == '__main__':
 	rospy.init_node('pos_converter', anonymous = True)
 	# add a subscriber to it to read the position information
 	
-	rospy.Subscriber('/turtle1/pose', Pose, pose_callback)
+	
 	
 
-	rospy.Subscriber('/turtle1/params', Turtlecontrol, callback)
+	
 	# add a publisher with a new topic using the Shortpos message
 	pos_pub = rospy.Publisher('/turtle1/cmd_vel',Twist, queue_size = 10)
 	# set a 10Hz frequency for this loop
@@ -48,9 +48,12 @@ if __name__ == '__main__':
 	
 	while not rospy.is_shutdown():
 		# publish the message
-		vel_cmd.linear.x = test.kp*(test.xd - pos_msg.x)
-		
-		pos_pub.publish(vel_cmd)
+		rospy.Subscriber('/turtle1/params', Turtlecontrol, callback)
+		rospy.Subscriber('/turtle1/pose', Pose, pose_callback)
+		if(not(vel_cmd.linear == test.xd)):
+			vel_cmd.linear.x = (test.kp*(test.xd - pos_msg.x))
+	
+			pos_pub.publish(vel_cmd)
 		
 		# wait for 0.1 seconds until the next loop and repeat
 		loop_rate.sleep()
