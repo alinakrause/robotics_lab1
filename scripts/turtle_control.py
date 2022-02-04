@@ -30,7 +30,7 @@ def control_callback(data):
 	
 if __name__ == '__main__':
 	# initialize the node
-	rospy.init_node('proportional_control', anonymous = True)
+	rospy.init_node('turtle_control', anonymous = True)
 	# add a subscriber to it to read the position information
 	rospy.Subscriber('/turtle1/pose', Pose, pose_callback)
 	# add a subscriber to it to read the desired position and control gain
